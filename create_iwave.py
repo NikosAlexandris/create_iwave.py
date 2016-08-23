@@ -84,7 +84,7 @@ def interpolate_band(values, step=2.5):
     Output:
 
 
-    
+    ----------------------------------------------------------------------------
     Old text below:
 
     Receive wavelength and response for one band
@@ -98,9 +98,10 @@ def interpolate_band(values, step=2.5):
     # where response is nodata?
 
     # print "> Input:", values
-    print "  > Length:", len(values)
-    print "  > Interpolation step:", step
+    print " > Length of input values:", len(values)
+    print " > Interpolation step:", step
 
+    # --- To Clean Comments and Variable Names? -------------------------------
     w = values[:,1] >= 0
     response = values[w]
 
@@ -109,56 +110,60 @@ def interpolate_band(values, step=2.5):
     assert len(wavelengths) == len(spectral_response), "Number of wavelength slots and spectral responses are not equal!"
 
     # interpolating
-    print "> Number of wavelength slots and input spectral responses:", len(wavelengths), "wavelengths slots."
+    print "Interpolation"
+    print "  > Number of wavelength slots and input spectral responses:", len(wavelengths), "wavelengths slots."
     print
-    print "Wavelengths (nm)", wavelengths, "|Length:", len(wavelengths)
-    print "Spectral responses:", spectral_response, "|Length:", len(spectral_response)
+    print "  > Wavelengths (nm)", wavelengths, "\n|Length:", len(wavelengths)
+    print "  > Spectral responses:", spectral_response, "\n|Length:", len(spectral_response)
 
     f = interpolate.interp1d(wavelengths, spectral_response)
-    print "An object of class `interp1d`:", f
-    print
+    # print "An object of class `interp1d`:", f
+    # print
 
-    
     # start and stop values for interpolation function
     start = wavelengths[0]
-    print "Start interpolation from wavelength:", start
+    print "  > Start interpolation from wavelength:", start
+
+    # --- To Clean Comments and Variable Names? -------------------------------
 
     # np.arange
     input_step = wavelengths[-1] - wavelengths[-2]
-    print "Input step is:", input_step
-    print "Addendum set to input_step:", input_step
+    print "  > Input step is:", input_step
     if input_step != step:
         input_step = step
-        print "Addendum =", input_step
+
+    print "  > Addendum set to input_step:", input_step
     stop = wavelengths[-1] + input_step
 
-    print "Stop interpolation to wavelength:", stop
+    # --- To Clean Comments and Variable Names? -------------------------------
+
+    print "  > Stop interpolation to wavelength:", stop
     print
 
-    print "> Expected number of interpolated spectral responses:", np.ceil((stop - start)/step)
+    print "  > Expected number of interpolated spectral responses:", np.ceil((stop - start)/step)
 
-    print "np.arange(", start, ",", stop, "):"
-    print np.arange(start, stop, step)
-
+    print "Output"
     filter_f = f(np.arange(start, stop, step))
-    print "Filter function:", filter_f
+    print "  > Filter function:", filter_f
     print
-   
+
     # how many spectral responses?
-    print "Number of interpolated spectral responses:", len(filter_f)
-    # assert len(filter_f) == len(spectral_response), "Wavelength slots considered by the interpolation function not equal to interpolated spectral responses."
+    print "  > Number of interpolated spectral responses:", len(filter_f)
+    expected = np.ceil((stop - start) / step)
+    assert len(filter_f) == expected, "Number of interpolated spectral responses not equal to expected number of interpolations"
 
     # convert limits from nanometers to micrometers
     lowerlimit = wavelengths[0]/1000
-    print "Lower limit (microns):", lowerlimit
+    print "  > Lower limit (microns):", lowerlimit
 
     upperlimit = wavelengths[-1]/1000
-    print "Upper limit (microns)", upperlimit
+    print "  > Upper limit (microns)", upperlimit
 
     return(filter_f, (lowerlimit, upperlimit))
 
 def plot_filter(values):
-    """Plot wl response values and interpolated
+    """
+    Plot wl response values and interpolated
     filter function. This is just for checking...
     value is a 2 column numpy array
     function has to be used inside Spyder python environment
